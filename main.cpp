@@ -1,9 +1,28 @@
 #include <iostream>
 #include <unistd.h>
+#include <string>
+#include <fstream>
 #include <OpenNI.h>
 
 #include "sampleTaker.h"
 #include "displayer.h"
+
+bool savePointsToFiles(vector<Point3> points, std::string fileName)
+{
+    std::ofstream file;
+
+    file.open(fileName.c_str());
+    if(!file.is_open())
+        return false;
+
+    for(size_t i=0; i < points.size(); i++)
+    {
+        file << points[i].x << " " << points[i].y << " " << points[i].z << "\n";
+    }
+
+    file.close();
+    return true;
+}
 
 void displaySample(Displayer displayer, vector<Point3> sample)
 {
@@ -29,6 +48,7 @@ void printInstructions()
     std::cout << "Commands:" << std::endl;
     std::cout << "\ts - Take a sample" << std::endl;
     std::cout << "\ta - Show average of the taken samples" << std::endl;
+    std::cout << "\tf - Save average in file average.xyz" << std::endl;
     std::cout << "\tr - Reset data" << std::endl;
     std::cout << "\th - Print instructions" << std::endl;
     std::cout << "\tEsc - Quit" << std::endl;
@@ -99,6 +119,17 @@ int main(int argc, char* argv[])
                         {
                             displaySample(displayer, average);
                             std::cout << "Average displayed" << std::endl;
+                        }
+                        else
+                            std::cout << "No sample was taken!" << std::endl;
+                    }
+                    else if(event.key.keysym.sym == SDLK_f)
+                    {
+                        average = taker.getAverage();
+                        if(average.size() > 0)
+                        {
+                            savePointsToFiles(average, "average.xyz");
+                            std::cout << "Average saved" << std::endl;
                         }
                         else
                             std::cout << "No sample was taken!" << std::endl;
