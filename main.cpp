@@ -49,6 +49,7 @@ void printInstructions()
     std::cout << "\ts - Take a sample" << std::endl;
     std::cout << "\ta - Show average of the taken samples" << std::endl;
     std::cout << "\tf - Save average in file average.xyz" << std::endl;
+    std::cout << "\te - Save every samples in files" << std::endl;
     std::cout << "\tr - Reset data" << std::endl;
     std::cout << "\th - Print instructions" << std::endl;
     std::cout << "\tEsc - Quit" << std::endl;
@@ -133,6 +134,22 @@ int main(int argc, char* argv[])
                         }
                         else
                             std::cout << "No sample was taken!" << std::endl;
+                    }
+                    else if(event.key.keysym.sym == SDLK_e)
+                    {
+                        if(taker.samples.size() == 0)
+                        {
+                            std::cout << "No samples" << std::endl;
+                            continue;
+                        }
+                        std::string coreName = "sample", name;
+                        for(unsigned int i=0; i < taker.samples.size(); i++)
+                        {
+                            name = coreName + (char) (i + 65) + ".xyz";
+                            std::cout << "\tSaving " << name << std::endl;
+                            savePointsToFiles(taker.samples[i], name);
+                        }
+                        std::cout << "All saves are done" << std::endl;
                     }
                     break;
             }
